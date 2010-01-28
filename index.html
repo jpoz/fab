@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv='content-type' content='text/html;charset=UTF-8' />
-    <title>(fab) | a pure javascript DSL for building async web apps</title>
+    <title>(fab) - a pure javascript DSL for building async web apps</title>
     <style>
       h1 {
         background: url(logo.png) 50% 50% no-repeat;
@@ -108,6 +108,7 @@
     <h3>Table of Contents</h3>
     
     <ul>
+      <li><a href="#chainfindbind">Using chaining to find and bind</a></li>
       <li><a href="#installing">Installing (fab)</a></li>
       <li><a href="#gettingstarted">Getting started</a></li>
       <li><a href="#addingpaths">Adding paths</a></li>
@@ -122,7 +123,23 @@
       <li><a href="#feedback">Feedback</a></li>
       <li><a href="#license">License</a></li>
     </ul>
+        
+    <h3 id="chainfindbind">Using chaining to find and bind</h3>
     
+    <p>
+      Just like you would use <a href="http://jquery.com">jQuery</a> to <em>find</em> nodes in the DOM and <em>bind</em> event handlers to them, you can use (fab) to <em>find</em> parts of your site, and <em>bind</em> request handlers to them.
+    </p>
+
+    <p>
+      And like jQuery, (fab) works by chaining. This means that instead of saving traversal targets locally, you can chain them together to keep things less verbose. But the difference is that (fab) uses one overloaded function instead of a collection of methods, so instead of chaining methods, you're chaining functions. (fab) doesn't expose any of it's own methods; instead, it lets you focus on your own:
+    </p>
+    
+    <script src="http://gist.github.com/287475.js?file=dateTime.js"></script>
+    
+    <p>
+      (fab)'s brevity may look unorthodox, but it's perfectly valid javascript, without the need for pre-compilation or <code>with</code> scoping magic.
+    </p>
+
     <h3 id="installing">Installing (fab)</h3>
     
     <p>
@@ -134,7 +151,7 @@
     <p>
       All of the following examples assume you're in the directory that contains the (fab) repository.
     </p>
-    
+
     <h3 id="gettingstarted">Getting started</h3>
     
     <p>

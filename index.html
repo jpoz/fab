@@ -15,6 +15,7 @@
       h2 {
         text-align: center;    
         margin-bottom: 30px;
+        font-family: "Georgia", "Times New Roman", serif;
       }
     
       body {
@@ -72,16 +73,16 @@
   <div id='container'>
 
     <h1>(fab)</h1>
-    <h2>a javascript DSL for building async web apps</h2>
+    <h2>a pure javascript DSL for building async web apps</h2>
     
     <h3 id="intro">Introduction</h3>
     
     <p>
-      (fab) makes it easy to build asynchronous web apps.
+      (fab) is a lightweight (~2KB minified and gzipped) toolkit that makes it easy to build asynchronous web apps. It takes advantage of the flexibility of javascript to create a concise DSL without pre-compilation or magic scope hackery.
     </p>
     
     <p>
-      Here's an example of an application running on <a href="http://nodejs.org">node.js</a>, currently the only supported platform. Just create a file like this:
+      Here's an example of an application running on <a href="http://nodejs.org">node.js</a> (currently the only supported platform). Just create a file like this:
     </p>
 
     <script src="http://gist.github.com/287475.js?file=hello.js"></script>
@@ -104,7 +105,25 @@
     
     <script src="http://gist.github.com/287475.js?file=hello2.sh"></script>
     
-    <h3>Installing (fab)</h3>
+    <h3>Table of Contents</h3>
+    
+    <ul>
+      <li><a href="#installing">Installing (fab)</a></li>
+      <li><a href="#gettingstarted">Getting started</a></li>
+      <li><a href="#addingpaths">Adding paths</a></li>
+      <li><a href="#nestedpaths">Nesting paths</a></li>
+      <li><a href="#regexpaths">Matching paths with regular expressions</a></li>
+      <li><a href="#handlingstatuses">Handling error and other status codes</a></li>
+      <li><a href="#defininghandlers">Defining handler functions</a></li>
+      <li><a href="#asyncandstreaming">Returning asynchronous and streaming responses</a></li>
+      <li><a href="#streamingrequests">Handling streaming requests</a></li>
+      <li><a href="#usingmiddleware">Using middleware</a></li>
+      <li><a href="#whatsnext">What's next</a></li>
+      <li><a href="#feedback">Feedback</a></li>
+      <li><a href="#license">License</a></li>
+    </ul>
+    
+    <h3 id="installing">Installing (fab)</h3>
     
     <p>
       Once you've installed <a href="http://nodejs.org">node.js</a>, download (fab) <a href="http://github.com/jed/fab/archives/master">here</a>, or clone it using git:
@@ -116,7 +135,7 @@
       All of the following examples assume you're in the directory that contains the (fab) repository.
     </p>
     
-    <h3>Getting started</h3>
+    <h3 id="gettingstarted">Getting started</h3>
     
     <p>
       To get a better understanding of how (fab) works, let's start with the bare minimum. Here's the smallest possible (fab) app:
@@ -128,7 +147,7 @@
       Yep, that's it. This returns a listener: a function that receives HTTP requests and returns HTTP responses. But since we haven't defined any paths, it'll just respond to everything with a 404.
     </p>
     
-    <h3>Paths</h3>
+    <h3 id="addingpaths">Adding paths</h3>
     
     <p>
       So now let's add a path, to get our original hello world application:
@@ -152,7 +171,7 @@
       Now our app responds to both paths.
     </p>
     
-    <h3>Nested paths</h3>
+    <h3 id="nestedpaths">Nesting paths</h3>
     
     <p>
       For paths with a common prefix, like the two above, we can take advantage of (fab)'s hierarchy; like folders in a filesystem, (fab) paths can contain other paths. So this is identical:
@@ -176,7 +195,7 @@
       </li>
     </ol>
     
-    <h3>Paths with regular expressions</h3>
+    <h3 id="regexpaths">Matching paths with regular expressions</h3>
     
     <p>
       Regular expressions can also be used instead of strings, for binding handlers on matching paths:
@@ -194,7 +213,7 @@
       so that a <code>GET</code> request to <code>/hello/jed</code> would return <code>hello, jed!</code>.
     </p>
     
-    <h3>Handling error and other status codes</h3>
+    <h3 id="handlingstatuses">Handling error and other status codes</h3>
     
     <p>
       (fab) also lets us define how we want status codes to be handled, for each level of our app:
@@ -206,7 +225,7 @@
       This allows us to define more meaningful status handlers that are local to each path. When a status is thrown, (fab) will walk up the hierarchy and call the first status handler it finds.
     <p>
     
-    <h3>Handler functions</h3>
+    <h3 id="defininghandlers">Defining handler functions</h3>
     
     <p>
       Since returning static strings isn't very useful, let's talk about function handlers. Here's what every handler has available for every request:
@@ -233,7 +252,7 @@
         a string (such as <code>"hello!"</code>), which gets written as the response body, or
       </li>
       <li>
-        an array containing any or all of the above, which lets us return full responses like this one, which sets the status to 200, sets the <code>Content-Length</code> header to <code>6</code> and the <code>Content-Type</code> header to <code>text/plain<code>, sends a body with <code>hello!</code>, and finishes the response.
+        an array containing any or all of the above, which lets us return full responses like this one, which sets the status to 200, sets the <code>Content-Length</code> header to <code>6</code> and the <code>Content-Type</code> header to <code>text/plain</code>, sends a body with <code>hello!</code>, and finishes the response.
       </li>
     </ul>
     
@@ -243,7 +262,7 @@
       Keep in mind that order is important: the status and headers must be included before any body content.
     </p>
     
-    <h3>Asynchronous and streaming responses</h3>
+    <h3 id="asyncandstreaming">Returning asynchronous and streaming responses</h3>
     
     <p>
       In all the examples above, we've used a static string, or a function that returns the response. But in a truly async app, we can't return the response right away; we might be waiting for some database results, or a remote call. Or we might need to wait until the body of a <code>POST</code> response is fully sent before responding.
@@ -265,7 +284,7 @@
       This allows us to take advantage of the intutive use of <code>return</code>, without requiring synchronicity. keep in mind that if the handler function doesn't return anything, the connection will remain open until <code>respond( null )</code> is called.
     </p>
     
-    <h3>Streaming requests</h3>
+    <h3 id="streamingrequests">Handling streaming requests</h3>
     
     <p>
       So far we've returned numbers, objects, and strings to assemble responses, but there's one more thing we can return: a function. This function becomes a listener for subsequent request events.
@@ -277,7 +296,7 @@
       Just like the <code>respond</code> function, the listener function takes one argument: the data payload. if the payload is <code>null</code>, the request is finished and we can return the response.
     </p>
     
-    <h3>Middleware</h3>
+    <h3 id="usingmiddleware">Using middleware</h3>
     
     <p>
       (fab) is easy to extend with your own functions:
@@ -297,7 +316,7 @@
       More documentation on this is forthcoming.
     </p>
     
-    <h3>What's next</h3>
+    <h3 id="whatsnext">What's next</h3>
 
     <p>
       Here are some things i think would be nice to add for future versions of (fab):
@@ -312,13 +331,13 @@
       </li>
     </ul>
     
-    <h3>Feedback</h3>
+    <h3 id="feedback">Feedback</h3>
     
     <p>
       Feel free to <a href="http://github.com/jed/fab/issues">add an issue</a> if you find a bug, or fork as you'd like and send me a pull request. You can also find me sometimes in #node.js on freenode, or on <a href="http://twitter.com/jedschmidt">@jedschmidt</a> on twitter.
     </p>
     
-    <h3>License</h3>
+    <h3 id="license">License</h3>
     
     <p>
       Copyright (c) 2009 Jed Schmidt (<a href="http://jedschmidt.com">http://jedschmidt.com</a>)

@@ -289,6 +289,10 @@
       That's no problem for (fab). Every function handler is actually passed one argument: a <code>respond</code> function. So we can do this:
     </p>
 
+    <p>
+      (You can also have your function receive two arguments: <code>request</code> and <code>respond</code>: in this case, the <code>request</code> parameter is set to <code>this</code> so that you don't need any <code>var self = this</code> hackery for nested functions.)
+    </p>
+
     <script src="http://gist.github.com/287475.js?file=helloAsync.js"></script>
     
     <p>

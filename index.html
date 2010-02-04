@@ -114,6 +114,7 @@
       <li><a href="#addingpaths">Adding paths</a></li>
       <li><a href="#nestedpaths">Nesting paths</a></li>
       <li><a href="#regexpaths">Matching paths with regular expressions</a></li>
+      <li><a href="#extendingcontexts">Extending contexts</a></li>
       <li><a href="#handlingstatuses">Handling error and other status codes</a></li>
       <li><a href="#defininghandlers">Defining handler functions</a></li>
       <li><a href="#asyncandstreaming">Returning asynchronous and streaming responses</a></li>
@@ -229,6 +230,14 @@
     <p>
       so that a <code>GET</code> request to <code>/hello/jed</code> would return <code>hello, jed!</code>.
     </p>
+
+    <h3 id="extendingcontexts">Using chaining to find and bind</h3>
+    
+    <p>
+      (fab) lets us build apps separately in a modular fashion, and then merge them together. This means that we can do this:
+    </p>
+
+    <script src="http://gist.github.com/287475.js?file=helloExtend.js"></script>
     
     <h3 id="handlingstatuses">Handling error and other status codes</h3>
     

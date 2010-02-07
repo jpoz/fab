@@ -1,0 +1,219 @@
+<!--
+    <h3 id="quickstart">Introduction</h3>
+    <p>(fab) makes it easy to build asynchronous web apps.</p>
+    
+    <p>
+      here's an example of an application running on <a href="http://nodejs.org">node.js</a>, currently the only supported platform. just create a file:
+    </p>
+    
+    <script src="http://gist.github.com/287475.js?file=hello.js"></script>
+
+    <p>then run it in node:</p>
+    
+    <script src="http://gist.github.com/287475.js?file=hello.sh"></script>
+
+    <p>
+      and hit <code>http://localhost:4011/</code>.
+    </p>
+    
+    <h3 id='generator'>The <code>fab</code> function</h3>
+    
+    <p>
+      The <code>fab</code> function returns a <a href="contexts">context</a>, the building block of a web application. This function is often parenthesized as <code>(fab)</code>, for style.
+    </p>
+    
+    <dl>
+      <dt>
+        <code>fab()</code>
+      </dt>
+      <dd>
+        <p>
+          Returns a new context. Any arguments passed to this function are passed on to the created context, so that <code>fab( <var>arg1</var>, <var>arg2</var>, ... <var>argn</var> )</code> is the same as <code>fab()( <var>arg1</var>, <var>arg2</var>, ... <var>argn</var> )</code>.
+        </p>
+      </dd>
+    </dl>
+    
+    <h3 id='contexts'>Contexts</h3>
+    
+    <p>
+      Contexts are points in the path hierarchy of a web application, where handlers for HTTP methods and statuses, as well as further subpath contexts, are defined.
+    </p>
+    
+    <dl>
+      <dt>
+        <code><var>context</var>( <var>path</var>, [<var>handler</var>] )</code>
+      </dt>
+      <dd>
+        <p>
+          Appends and returns a new context at the specified <var>path</var>. <var>path</var> can be a string for exact prefix matches, or a regular expression for matching prefix patterns. Parenthesized subgroup matches in regular expressions are available in the <code>context</code> object on each request.
+        </p>
+        <p>
+          An optional <var>handler</var> can be passed to bind on the <code>GET</code> method and return the previous context, so that <code><var>context</var>( <var>path</var>, <var>handler</var> )</code> is the same as <code><var>context</var>( <var>path</var> )[ 'GET' ]( <var>handler</var> )()</code>.
+        </p>
+        <p>
+          Paths are sorted lexicographically by source, so that longer paths are matched first.
+        </p>
+      </dd>
+
+      <dt>
+        <code><var>context</var>()</code>
+      </dt>
+      <dd>
+        <p>
+          Returns the context to which the current context was appended (or the current <var>context</var> if it is the root).
+        </p>
+      </dd>
+  
+      <dt>
+        <code><var>context</var>[ <var>methodName</var> ]( <var>handler</var> )</code>
+      </dt>
+      <dt>
+        <code><var>context</var>.<var>methodName</var>( <var>handler</var> )</code>
+      </dt>
+      <dd>
+        <p>
+          Binds a <var>handler</var> to be fired when HTTP requests with the <var>methodName</var> method are called on the current <var>context</var>, and returns the current <var>context</var>. <var>methodName</var> can be one of the following: <code>HEAD</code>, <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, <code>TRACE</code>, <code>OPTIONS</code>, <code>CONNECT</code>, and the catch-all <code>*</code>.
+        </p>
+      </dd>
+
+      <dt>
+        <code><var>context</var>[ <var>statusCode</var> ]( <var>handler</var> )</code>
+      </dt>
+      <dd>
+        <p>
+          Binds a <var>handler</var> to be fired when HTTP responses with the <var>statusCode</var> status occur on the current <var>context</var> or contexts within, and returns the current <var>context</var>. <var>statusCode</var> can be one of the following: <code>100</code>, <code>101</code>, <code>200</code> to <code>206</code>, <code>300</code> to <code>305</code>, <code>400</code> to <code>415</code>, and <code>500</code> to <code>505</code>.
+        </p>
+      </dd>
+  
+      <dt>
+        <code><var>context</var>( <var>wrapper</var>, [<var>arg1</var>, <var>arg2</var>, ... <var>argn</var>] )</code>
+      </dt>
+      <dd>
+        <p>
+          Wraps the handler on the current <var>context</var> into the <var>wrapper</var>, a function that takes the handler (and any other optional arguments), and wraps it with another handler, which then replaces the current handler.
+        </p>
+      </dd>
+  
+      <dt>
+        <code><var>context</var>( fab )</code>
+      </dt>
+      <dd>
+        <p>
+          Used at the end of a (fab) chain, this returns a listener function for the <var>context</var>.
+        </p>
+      </dd>
+    </dl>
+  
+    <h3 id='handlers'>Handlers</h3>
+    <p>
+      Handlers are functions bound to request methods or response statuses for a given context, and are used to respond to incoming HTTP requests. A handler typically looks like this: <pre><code>function( request, respond ){ /* handler logic here */ }</code></pre>
+
+      
+      Non-function objects can also be used as handlers, and are treated as functions that return the original object, so that <pre><code>"Hello world."</code></pre> is the same as <pre><code>function( request, respond ){ return "Hello world." }</code></pre>
+    </p>
+    <p>
+      A handler is a function that takes two arguments, a <a href="#request">request object</a> and a <a href="#respond">respond function</a>.
+    </p>
+
+    <h3 id='request'>The request object</h3>
+    <p>
+      The request object is passed as the first argument to a handler function, and has the following three properties:
+    </p>
+    <ul>
+      <li><code>request.method</code>: a string indicating the HTTP method for the request</li>
+      <li><code>request.headers</code>: an object with the HTTP headers for the request</li>
+      <li><code>request.url</code>: an object representing the request url, parsed into components, such as <code>query</code> and <code>capture</code></li>
+    </ul>
+    
+    <h3 id='respond'>The respond function</h3>
+    <p>
+      The respond function is passed as the second argument to a handler function.
+    </p>
+    <p>(fab) is an asynchronous framework. This means that instead of <code>return</code>ing a response, handlers pass the response to the <code>respond</code> function provided as the second argument.</p>
+    <code>function( request, respond ){ /* handler code */ }</code>.
+    
+    <dl>
+      <dt><code>respond( <var>number</var> );</code></dt>
+      <dd>
+        <p>
+          Sets the response code to <var>number</var>.
+        </p>
+      </dd>
+      <dt><code>respond( <var>object</var> );</code></dt>
+      <dd>
+        <p>
+          Extends the current response header object with the keys and values on <var>object</var>.
+        </p>
+      </dd>
+      <dt><code>respond( <var>string</var> );</code></dt>
+      <dd>
+        <p>
+          Sends <var>string</var> to the response body.
+        </p>
+      </dd>
+      <dt><code>respond( <var>function</var> );</code></dt>
+      <dd>
+        <p>
+          Adds <var>function</var> as a listener to subsequent request events. Like the <code>respond</code> function itself, <var>function</var> is called with one argument: a string for body events, and <code>null</code> when the request is finished.
+        </p>
+      </dd>
+      <dt><code>respond( null );</code></dt>
+      <dd>
+        <p>
+          Finishes the response and closes the connection.
+        </p>
+      </dd>
+      <dt><code>respond( <var>arg1</var>, <var>arg2</var>, ... <var>argn</var> );</code></dt>
+      <dt><code>respond( <var>arg1</var> )( <var>arg2</var> )( ... )( <var>argn</var> );</code></dt>
+      <dt><code>respond( [<var>arg1</var>, <var>arg2</var>, ... <var>argn</var>] );</code></dt>
+      <dd>
+        <p>
+          Calls the <code>respond</code> function for each argument in order, for the same effect as:
+        </p>
+        <pre>
+respond( <var>arg1</var> );
+respond( <var>arg2</var> );
+respond( ... );
+respond( <var>argn</var> );</pre>
+      </dd>
+      <dt><code>return <var>arg</var>;</code></dt>
+      <dd>
+        <p>
+          Passes <var>arg</var> to <code>respond</code>, followed by <code>null</code> (unless <var>arg</var> is a function), for the same effect as:
+        </p>
+        <pre>
+respond( <var>arg</var> );
+respond( <var>null</var> );
+</pre>
+      </dd>
+    </dl>
+    
+    
+    
+        <pre>
+function( request, respond ) {
+  respond( 200 );
+  respond( {'content-type': 'text/plain'} );
+  respond( 'Hello world.' );
+  respond( null );
+}
+
+function( request, respond ) {
+  respond( 200, {'content-type': 'text/plain'}, 'Hello world.', null );
+}
+
+function( request, respond ) {
+  return [ 200, {'content-type': 'text/plain'}, 'Hello world.' ];
+}
+
+[ 200, {'content-type': 'text/plain'}, 'Hello world.' ]
+
+</pre>
+
+    
+    <h3 id='wrappers'>Wrappers</h3>
+    <p>
+      Any context can be wrapped with a "middleware" wrapper function. This function takes a single argument, the current handler, and returns another handler, which replaces the current handler on the current context. Wrappers can be used to intercept requests and responses anywhere in a (fab) hierarchy, to add custom functionality such as logging, additional headers, and other processing.
+    </p>
+  -->
+

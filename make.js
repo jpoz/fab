@@ -9,13 +9,13 @@ getExamples();
 
 function getExamples() {
   posix
-    .readdir( "examples" )
+    .readdir( "../fab/examples" )
     .addCallback( function( files ) {
       var count = files.length;
     
       files.forEach( function( filename ) {
         posix
-          .cat( path.join( "examples", filename ) )
+          .cat( path.join( "../fab/examples", filename ) )
           .addCallback( function( content ) {
             examples[ filename ] = content;
             if ( !--count ) renderPage();
@@ -26,12 +26,12 @@ function getExamples() {
 
 function renderPage() {
   posix
-    .cat( "doc/index.tmpl" )
+    .cat( "index.tmpl" )
     .addCallback( function( content ) {
       var html = tmpl( content )( { examples: examples } );
       
       posix
-        .open( "doc/index.html", process.O_WRONLY | process.O_TRUNC | process.O_CREAT, 0644 )
+        .open( "index.html", process.O_WRONLY | process.O_TRUNC | process.O_CREAT, 0644 )
         .addCallback( function( fd ) {
           posix
             .write( fd, html, 0, "utf8" )
